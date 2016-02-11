@@ -16,10 +16,16 @@ d3.Timeseries = function(){
 		.range(timeRange)
 		.bins(binSize.range(timeRange[0],timeRange[1]));
 	
+	var scaleX = d3.time.scale().range([0,chartW]).domain(timeRange),
+		scaleY = d3.scale.linear().range([chartH,0]).domain([0,maxY]);	
+	
+	var DataArray = [];
+	var MaxYNO = 0;
+	
 	//exports
 	function exports(_selection){
 		
-		console.log(_selection.x);
+//		console.log(_selection.x);
 		
 //		console.log(_selection);
 		
@@ -31,19 +37,29 @@ d3.Timeseries = function(){
 		chartW = w - m.l - m.r;
 		chartH = h - m.t - m.b;
 		
-		valueAccessor = function(d){return d.startTime;}		
-		
-		var scaleX = d3.time.scale().range([0,chartW]).domain(timeRange),
-			scaleY = d3.scale.linear().range([chartH,0]).domain([0,maxY]);
-		
+		valueAccessor = function(d){
 
-		
-		scaleX.range([0,chartW]).domain(timeRange),
-		scaleY.range([chartH,0]).domain([0,maxY]);
+			return d.startTime;}
 		
 		_selection.each(function(_d){
 			
 			var data = layout(_d)
+			var Maxdata = [layout(_d)];
+			//console.log(Maxdata);
+//			console.log(Maxdata[0][1].y);
+			
+			for(var i=0;i<Maxdata[0].length;i++)
+				{
+					DataArray[i] = Maxdata[0][i].y;
+				}
+			
+			MaxYNO = d3.max(DataArray);
+			console.log(MaxYNO);
+		
+			maxY = MaxYNO;
+			
+			scaleX.range([0,chartW]).domain(timeRange),
+			scaleY.range([chartH,0]).domain([0,maxY]);			
 			
 			var line = d3.svg.line()
 				.x(function(d){ return scaleX(d.x.getTime() + d.dx/2)})
@@ -58,7 +74,7 @@ d3.Timeseries = function(){
 				.orient('bottom')
 				.scale(scaleX)
 				.ticks(d3.time.year);			
-					console.log(area);
+//					console.log(area);
 //			var svg = d3.select(this)
 //			.append('svg')
 //			.data([_d]);
@@ -161,9 +177,14 @@ d3.Timeseries = function(){
 		return this;
 	}
 	exports.maxY = function(_y){
-		if(!arguments.length) return maxY;
-		maxY = _y;
-		return this;
+		if(!arguments.length)
+		{
+			return maxY;
+		}
+		else {
+			maxY = _y;
+			return this;
+		}
 	}
 	
 	return exports;

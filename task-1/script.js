@@ -10,7 +10,7 @@ function dataLoaded(err,rows){
 	.height(h)
     .timeRange([new Date(2011,6,16),new Date(2013,11,15)])
 	.value(function(d){ return d.startTime; })
-	.maxY(40)
+	.maxY(60)
     .binSize(d3.time.week);
 	
     //create nested hierarchy based on stations
@@ -23,7 +23,7 @@ function dataLoaded(err,rows){
     var plots = d3.select('.container').selectAll('.plot')
         .data(tripsByStation);
 	
-	console.log(plots);
+//	console.log(plots);
 
     plots
         .enter()
